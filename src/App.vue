@@ -58,8 +58,23 @@ export default {
       console.log(this.selectedPreset)
 
       const selectedConfig = this.readyConfigs[this.selectedPreset]
-
-      this.config = selectedConfig
+      console.log(selectedConfig)
+      this.config = {
+        name: this.selectedPreset,
+        interval: selectedConfig.Interval,
+        startDate: selectedConfig.StartDate,
+        endDate: selectedConfig.EndDate,
+        symbol: selectedConfig.Symbol,
+        pos: selectedConfig.Pos,
+        lever: selectedConfig.Lever,
+        priceStep: selectedConfig.PriceStep,
+        tpLevel: selectedConfig.TpLevel,
+        margeI: selectedConfig.MargeI,
+        margeS: selectedConfig.MargeS,
+        orderAmount: selectedConfig.OrderAmount,
+        multStep: selectedConfig.MultStep,
+        multAmount: selectedConfig.MultAmount,
+      }
     },
     launchDetails() {
       const api = 'http://localhost:3000/bot'
@@ -74,7 +89,7 @@ export default {
         .then((response) => {
           this.fileName = response.data.filename
           this.fileContent = response.data.content
-
+          this.fileContentLines = this.fileContent.split('\n')
           console.log(`Received ${this.fileName} with content:`, this.fileContent)
           this.isLoading = false
         })
@@ -91,28 +106,22 @@ export default {
         alert('Please enter a configuration name')
         return
       }
-      /*
-    const newConfig = {
-      newName: {
-        interval: this.config.interval,
-        startDate: this.config.startDate,
-        endDate: this.config.endDate,
-        symbol: this.config.symbol,
-        pos: this.config.pos,
-        lever: this.config.lever,
-        priceStep: this.config.priceStep,
-        tpLevel: this.config.tpLevel,
-        margeI: this.config.margeI,
-        margeS: this.config.margeS,
-        orderAmount: this.config.orderAmount,
-        multStep: this.config.multStep,
-        multAmount: this.config.multAmount,
-      },
-    }*/
-      //Object.assign(readyConfigs, newConfig)
-      // Generate the Go code for this configuration
-
-      // In a real application, you would also send this to your backend
+      const data = this.config
+      console.log('HELLO', data)
+      axios
+        .post('http://localhost:3000/config', data, {
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        })
+        .then((data) => {
+          console.log(data.request.response)
+          console.log(JSON.parse(data.request.response))
+          this.getConfigs()
+        })
+        .catch((error) => {
+          console.error('Error fetching file:', error)
+        })
       console.log('Configuration saved:', this.config)
     },
     copyConfig() {
@@ -410,7 +419,7 @@ export default {
 
       <div v-else class="bg-gray-900 p-4 rounded-md overflow-auto max-h-screen">
         <div
-          v-for="(line, index) in fileContent"
+          v-for="(line, index) in fileContentLines"
           :key="index"
           class="py-1 border-b border-gray-800 text-gray-200 font-mono text-sm"
         >
