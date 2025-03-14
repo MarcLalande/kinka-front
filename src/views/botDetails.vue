@@ -38,7 +38,7 @@ export default {
   methods: {
     getConfigs() {
       axios
-        .get('http://localhost:3000/config', {
+        .get('http://localhost:3001/config', {
           headers: {
             'Content-Type': 'application/json',
           },
@@ -79,7 +79,7 @@ export default {
     launchDetails() {
       this.fileContent = ''
       this.isLoading = true
-      const api = 'http://localhost:3000/bot'
+      const api = 'http://localhost:3001/bot'
       const data = this.config
       console.log(data)
       axios
@@ -111,7 +111,7 @@ export default {
       const data = this.config
       console.log('HELLO', data)
       axios
-        .post('http://localhost:3000/config', data, {
+        .post('http://localhost:3001/config', data, {
           headers: {
             'Content-Type': 'application/json',
           },
