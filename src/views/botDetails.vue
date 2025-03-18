@@ -1,36 +1,43 @@
 <script>
+import BotResult from '@/components/botResult.vue'
 import axios from 'axios'
-
+const getDefaultConfig = () => ({
+  name: '',
+  interval: '',
+  startDate: '',
+  endDate: '',
+  symbol: '',
+  pos: 'LONG',
+  lever: null,
+  priceStep: null,
+  tpLevel: null,
+  margeI: 0.0,
+  margeS: 0.0,
+  orderAmount: null,
+  multStep: null,
+  multAmount: null,
+})
 export default {
+  components: {
+    BotResult,
+  },
   data() {
     return {
+      resultBotDetails: {},
       readyConfigs: {},
       isLoading: false,
       showConfig: false,
       selectedPreset: '',
       showResult: false,
       generatedConfig: '',
+
       fileContent: '',
-      config: {
-        name: '',
-        interval: '',
-        startDate: '',
-        endDate: '',
-        symbol: '',
-        pos: 'LONG',
-        lever: null,
-        priceStep: null,
-        tpLevel: null,
-        margeI: 0.0,
-        margeS: 0.0,
-        orderAmount: null,
-        multStep: null,
-        multAmount: null,
-      },
+      config: getDefaultConfig(),
     }
   },
 
   created() {
+    console.log(Object.keys(this.resultBotDetails).length === 0)
     console.log(this.readyConfigs)
     this.getConfigs()
     console.log(this.readyConfigs)
@@ -77,6 +84,7 @@ export default {
       }
     },
     launchDetails() {
+      this.resultBotDetails = {}
       this.fileContent = ''
       this.isLoading = true
       const api = 'http://localhost:3001/bot'
@@ -89,10 +97,9 @@ export default {
           },
         })
         .then((response) => {
-          this.fileName = response.data.filename
-          this.fileContent = response.data.content
-          this.fileContentLines = this.fileContent.split('\n')
-          console.log(`Received ${this.fileName} with content:`, this.fileContent)
+          console.log(response, 'flag')
+          this.resultBotDetails = response.data.result
+          console.log(this.resultBotDetails)
           this.isLoading = false
         })
         .catch((error) => {
@@ -119,6 +126,27 @@ export default {
         .then((data) => {
           console.log(data.request.response)
           console.log(JSON.parse(data.request.response))
+          this.getConfigs()
+        })
+        .catch((error) => {
+          console.error('Error fetching file:', error)
+        })
+      console.log('Configuration saved:', this.config)
+    },
+    removeConfig() {
+      const data = this.config
+      console.log('HELLOdelete', data)
+      axios
+        .delete('http://localhost:3001/config', {
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          data: data,
+        })
+        .then((data) => {
+          console.log(data.request.response)
+          this.showConfig = false
+          this.config = getDefaultConfig()
           this.getConfigs()
         })
         .catch((error) => {
@@ -198,6 +226,18 @@ export default {
             "
           >
             Edit config
+          </button>
+        </div>
+      </div>
+      <div class="bg-gray-800 p-4 rounded-lg" v-if="config.name != ''">
+        <!-- Configuration Form Box -->
+        <div class="flex items-center">
+          <button
+            @click="removeConfig()"
+            class="w-full mt-4 flex justify-center items-center py-3 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+            :class="showConfig ? 'bg-red-400 hover:bg-red-400' : 'bg-red-600 hover:bg-red-700'"
+          >
+            Delete config
           </button>
         </div>
       </div>
@@ -406,7 +446,20 @@ export default {
           Download Results
         </button>
       </div>
-
+      <div class="bg-gray-800 p-4 rounded-lg" v-if="this.config.name == ''">
+        <!-- Configuration Form Box -->
+        <div class="flex items-center">
+          <div
+            class="w-full mt-4 flex justify-center items-center py-3 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-400 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+          >
+            No config selected
+          </div>
+        </div>
+      </div>
+      <BotResult
+        v-if="Object.keys(this.resultBotDetails).length !== 0"
+        :bot-data="this.resultBotDetails"
+      ></BotResult>
       <div v-if="isLoading" class="flex justify-center items-center h-64">
         <div
           class="w-12 h-12 border-4 border-indigo-500 border-t-transparent rounded-full animate-spin"
@@ -415,16 +468,6 @@ export default {
 
       <div v-else-if="!fileContent" class="flex justify-center items-center h-64 text-gray-400">
         <p>No results yet. Configure and launch the bot to see results here.</p>
-      </div>
-
-      <div v-else class="bg-gray-900 p-4 rounded-md overflow-auto max-h-screen">
-        <div
-          v-for="(line, index) in fileContentLines"
-          :key="index"
-          class="py-1 border-b border-gray-800 text-gray-200 font-mono text-sm"
-        >
-          {{ line }}
-        </div>
       </div>
     </div>
   </div>
