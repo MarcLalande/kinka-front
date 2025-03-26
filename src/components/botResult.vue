@@ -48,6 +48,10 @@
           <span class="param-label">TP Level:</span>
           <span class="param-value">{{ botData.settings.TpLevel }}</span>
         </div>
+        <div class="parameter">
+          <span class="param-label">Order Amount:</span>
+          <span class="param-value">{{ botData.settings.OrderAmount }}</span>
+        </div>
       </div>
 
       <div class="subsection">
@@ -64,10 +68,7 @@
 
       <div class="subsection">
         <div class="subsection-title">Order Settings:</div>
-        <div class="parameter">
-          <span class="param-label">Initial Amount:</span>
-          <span class="param-value">{{ botData.settings.OrderAmount }}</span>
-        </div>
+
         <div class="parameter">
           <span class="param-label">Multiplier Step:</span>
           <span class="param-value">{{ botData.settings.MultStep }}</span>
@@ -106,6 +107,49 @@
     <div class="section">
       <div class="section-header">
         <div class="divider">---------------------</div>
+        <div class="section-title">LIQUIDATION ANALYSIS</div>
+        <div class="divider">---------------------</div>
+      </div>
+
+      <div class="subsection">
+        <div class="subsection-title">LIQUIDATION STATUS:</div>
+        <div class="parameter">
+          <span class="param-label">Has Liquidated:</span>
+          <span class="param-value" :class="botData.hasLiquidated ? 'danger' : 'success'">
+            {{ botData.hasLiquidated ? 'YES' : 'NO' }}
+          </span>
+        </div>
+
+        <div class="parameter" v-if="botData.hasLiquidated">
+          <span class="param-label">Liquidation Date:</span>
+          <span class="param-value danger">{{ botData.dateLiquidation || 'N/A' }}</span>
+        </div>
+      </div>
+
+      <div class="subsection">
+        <div class="subsection-title">LIQUIDATION PROXIMITY:</div>
+        <div class="parameter">
+          <span class="param-label">Closest Point to Liquidation:</span>
+          <span class="param-value">{{
+            Math.round(botData.closestToLiq, 2) ? Math.round(botData.closestToLiq, 2) : 'N/A'
+          }}</span>
+        </div>
+        <div class="parameter">
+          <span class="param-label">Date of Closest Point:</span>
+          <span class="param-value">{{ botData.dateClosestToLiq || 'N/A' }}</span>
+        </div>
+        <div class="parameter">
+          <span class="param-label">Average Liquidation Proximity:</span>
+          <span class="param-value">{{
+            botData.avgLiquidationProximity ? botData.avgLiquidationProximity + '%' : 'N/A'
+          }}</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-header">
+        <div class="divider">---------------------</div>
         <div class="section-title">ORDER DISTRIBUTION</div>
         <div class="divider">---------------------</div>
       </div>
@@ -129,8 +173,84 @@
       <div class="subsection">
         <div class="subsection-title">TOP 10 LONGEST ACTIVE ORDERS:</div>
         <div v-for="(order, index) in botData.longestCycles" :key="index" class="parameter">
-          <span class="param-label">{{ index + 1 }}. Order: {{ order[0] }}</span>
-          <span class="param-value">Duration: {{ convertSeconds(order[1]) }}</span>
+          <span class="param-label"
+            >{{ index + 1 }}. Order: {{ order[0] }} &emsp; &emsp; Duration:
+            {{ convertSeconds(order[1]) }}</span
+          >
+          <span class="param-value"></span>
+        </div>
+      </div>
+      <div class="subsection">
+        <div class="subsection-title">Last cycle:</div>
+        <div class="parameter">
+          <span class="param-label"> Order: {{ botData.lastCycleBehavior[0] }}</span>
+          <span class="param-value"
+            >Duration: {{ convertSeconds(botData.lastCycleBehavior[1]) }}</span
+          >
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-header">
+        <div class="divider">---------------------</div>
+        <div class="section-title">INCOMING DATA</div>
+        <div class="divider">---------------------</div>
+      </div>
+
+      <div class="subsection">
+        <div class="subsection-title">MARKET DATA FEED:</div>
+        <div class="parameter">
+          <span class="param-label">Data Provider:</span>
+          <span class="param-value">{{ botData.dataFeed?.provider || 'N/A' }}</span>
+        </div>
+        <div class="parameter">
+          <span class="param-label">Feed Status:</span>
+          <span
+            class="param-value"
+            :class="botData.dataFeed?.status === 'Active' ? 'success' : 'warning'"
+          >
+            {{ botData.dataFeed?.status || 'N/A' }}
+          </span>
+        </div>
+        <div class="parameter">
+          <span class="param-label">Last Update:</span>
+          <span class="param-value">{{ botData.dataFeed?.lastUpdate || 'N/A' }}</span>
+        </div>
+      </div>
+
+      <div class="subsection">
+        <div class="subsection-title">DATA METRICS:</div>
+        <div class="parameter">
+          <span class="param-label">Latency (avg):</span>
+          <span class="param-value">{{
+            botData.dataFeed?.avgLatency ? botData.dataFeed.avgLatency + 'ms' : 'N/A'
+          }}</span>
+        </div>
+        <div class="parameter">
+          <span class="param-label">Data Points:</span>
+          <span class="param-value">{{ botData.dataFeed?.dataPoints || 'N/A' }}</span>
+        </div>
+        <div class="parameter">
+          <span class="param-label">Error Rate:</span>
+          <span
+            class="param-value"
+            :class="(botData.dataFeed?.errorRate || 0) > 1 ? 'warning' : 'success'"
+          >
+            {{ botData.dataFeed?.errorRate ? botData.dataFeed.errorRate + '%' : 'N/A' }}
+          </span>
+        </div>
+      </div>
+
+      <div class="subsection">
+        <div class="subsection-title">EXTERNAL INDICATORS:</div>
+        <div
+          v-for="(value, indicator) in botData.dataFeed?.indicators"
+          :key="indicator"
+          class="parameter"
+        >
+          <span class="param-label">{{ indicator }}:</span>
+          <span class="param-value">{{ value }}</span>
         </div>
       </div>
     </div>
@@ -138,7 +258,6 @@
     <div class="divider">===========================================================</div>
   </div>
 </template>
-
 <script>
 export default {
   name: 'TradingBotResults',

@@ -16,6 +16,7 @@ const getDefaultConfig = () => ({
   orderAmount: null,
   multStep: null,
   multAmount: null,
+  margeSupp: 0.0,
 })
 export default {
   components: {
@@ -173,7 +174,9 @@ export default {
     <div class="md:w-1/3 flex flex-col gap-4">
       <!-- Preset Selector Box -->
       <div class="bg-gray-800 p-4 rounded-lg">
-        <h2 class="text-xl font-bold mb-4 text-white">Bot Configuration</h2>
+        <h2 class="text-xl font-bold mb-4 text-white">
+          Bot Configuration GET CLOSEST POINT TO LIQUIDATION AND LIQUIDATION
+        </h2>
 
         <!-- Preset Selector -->
         <div class="mb-4">
@@ -409,7 +412,16 @@ export default {
               placeholder="e.g., 1.58"
             />
           </div>
-
+          <div>
+            <label class="block text-sm font-medium text-gray-300">Marge Supp</label>
+            <input
+              type="number"
+              step="1"
+              v-model.number="config.margeSupp"
+              class="mt-1 block w-full py-2 px-3 border border-gray-700 bg-gray-900 text-white rounded-md focus:outline-none focus:ring-indigo-500"
+              placeholder="e.g., 50"
+            />
+          </div>
           <div class="pt-4">
             <button
               @click="launchDetails()"
