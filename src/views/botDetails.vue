@@ -1,7 +1,9 @@
 <script>
+const API_BASE_URL = '192.168.0.195'
 import BotResult from '@/components/botResult.vue'
 import axios from 'axios'
 const getDefaultConfig = () => ({
+  API_BASE_URL: '192.168.0.195',
   name: '',
   interval: '',
   startDate: '',
@@ -45,8 +47,9 @@ export default {
   },
   methods: {
     getConfigs() {
+      console.log(`http://${API_BASE_URL}:3001/config`)
       axios
-        .get('http://localhost:3001/config', {
+        .get(`http://${API_BASE_URL}:3001/config`, {
           headers: {
             'Content-Type': 'application/json',
           },
@@ -82,13 +85,15 @@ export default {
         orderAmount: selectedConfig.OrderAmount,
         multStep: selectedConfig.MultStep,
         multAmount: selectedConfig.MultAmount,
+        margeSupp: selectedConfig.margeSupp,
       }
     },
     launchDetails() {
       this.resultBotDetails = {}
       this.fileContent = ''
       this.isLoading = true
-      const api = 'http://localhost:3001/bot'
+      const api = `http://${API_BASE_URL}:3001/bot`
+
       const data = this.config
       console.log(data)
       axios
@@ -119,7 +124,7 @@ export default {
       const data = this.config
       console.log('HELLO', data)
       axios
-        .post('http://localhost:3001/config', data, {
+        .post(`http://${API_BASE_URL}:3001/config`, data, {
           headers: {
             'Content-Type': 'application/json',
           },
@@ -138,7 +143,7 @@ export default {
       const data = this.config
       console.log('HELLOdelete', data)
       axios
-        .delete('http://localhost:3001/config', {
+        .delete(`http://${API_BASE_URL}:3001/config`, {
           headers: {
             'Content-Type': 'application/json',
           },
