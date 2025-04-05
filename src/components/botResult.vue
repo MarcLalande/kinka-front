@@ -242,15 +242,44 @@
         </div>
       </div>
 
-      <div class="subsection">
-        <div class="subsection-title">EXTERNAL INDICATORS:</div>
-        <div
-          v-for="(value, indicator) in botData.dataFeed?.indicators"
-          :key="indicator"
-          class="parameter"
-        >
-          <span class="param-label">{{ indicator }}:</span>
-          <span class="param-value">{{ value }}</span>
+      <div class="section">
+        <div class="section-header">
+          <div class="divider">---------------------</div>
+          <div class="section-title">DAILY STATISTICS</div>
+          <div class="divider">---------------------</div>
+        </div>
+
+        <div class="subsection">
+          <div class="subsection-title">DAILY PERFORMANCE:</div>
+          <div class="daily-stats-table">
+            <div class="daily-stats-header">
+              <div class="daily-stats-cell">Date</div>
+              <div class="daily-stats-cell">Profit</div>
+              <div class="daily-stats-cell">Cycles</div>
+              <div class="daily-stats-cell">Highest order</div>
+              <div class="daily-stats-cell">Cycle avrg</div>
+              <div class="daily-stats-cell">Start</div>
+              <div class="daily-stats-cell">Low</div>
+              <div class="daily-stats-cell">High</div>
+              <div class="daily-stats-cell">range</div>
+            </div>
+            <div v-for="(day, index) in botData.dailyStats" :key="index" class="daily-stats-row">
+              <div class="daily-stats-cell">{{ unixToFormattedDate(day.Day - 86400 * 1000) }}</div> 
+
+              <div class="daily-stats-cell">
+                {{ formatNumber(day.TempProfit, 2) }}
+              </div>
+              <div class="daily-stats-cell">{{ day.TempCycle }}</div>
+              <div class="daily-stats-cell">{{ day.HighestOrder }}</div>
+              <div class="daily-stats-cell">{{ formatNumber(day.CycleMed, 2) }}</div>
+              <div class="daily-stats-cell" :class="getCellClass(day.RowStartTimestamp, index)">
+                {{ formatNumber(day.RowStartTimestamp, 0) }}
+              </div>
+              <div class="daily-stats-cell">{{ formatNumber(day.RowMin, 0) }}</div>
+              <div class="daily-stats-cell">{{ formatNumber(day.RowMax, 0) }}</div>
+              <div class="daily-stats-cell">{{ formatNumber(day.interval, 1) }}</div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -311,11 +340,42 @@ export default {
 
       return `${days}d ${hours}h ${minutes}m ${seconds}s`
     },
+    formatNumber(value, precision) {
+      // Check if value is null, undefined or not a number
+      if (value === undefined || value === null || isNaN(value)) return 'N/A'
+
+      // Handle both integers and floating point numbers
+      // Converting to Number first ensures proper handling of numeric strings too
+      const numValue = Number(value)
+      return numValue.toFixed(precision)
+    },
+    unixToFormattedDate(unixTimestamp) {
+      const date = new Date(unixTimestamp) // Convert to milliseconds
+      const day = date.getDate()
+      const month = date.toLocaleString('en-US', { month: 'short' })
+      const dayOfWeek = date.toLocaleString('en-US', { weekday: 'short' })
+      return `${dayOfWeek} ${day}-${day + 1} ${month}`
+    },
+
+    getCellClass(currentValue, index) {
+      if (index === 0) return '' // No previous value for the first item
+
+      const previousValue = this.botData.dailyStats[index - 1]?.RowStartTimestamp
+      return currentValue > previousValue ? 'green-cell' : 'red-cell'
+    },
   },
 }
 </script>
-
 <style scoped>
+.green-cell {
+  background-color: rgb(81, 107, 81);
+  color: white;
+}
+
+.red-cell {
+  background-color: rgb(213, 99, 99);
+  color: white;
+}
 .trading-bot-results {
   font-family: monospace;
   padding: 20px;
@@ -384,5 +444,60 @@ export default {
 
 .param-value {
   color: #4fd1c5;
+}
+
+/* Daily stats table styles */
+.daily-stats-table {
+  border: 1px solid #333;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.daily-stats-header {
+  display: flex;
+  background-color: #333;
+  font-weight: bold;
+  padding: 6px 0;
+}
+
+.daily-stats-row {
+  display: flex;
+  border-top: 1px solid #333;
+  padding: 4px 0;
+}
+
+.daily-stats-row:nth-child(odd) {
+  background-color: #252525;
+}
+
+.daily-stats-cell {
+  flex: 1;
+  padding: 2px 8px;
+  text-align: right;
+}
+
+.daily-stats-cell:first-child {
+  text-align: left;
+  color: #aaa;
+}
+
+.profit {
+  color: #4ade80;
+}
+
+.loss {
+  color: #f87171;
+}
+
+.danger {
+  color: #f87171;
+}
+
+.warning {
+  color: #facc15;
+}
+
+.success {
+  color: #4ade80;
 }
 </style>

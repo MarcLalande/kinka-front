@@ -1,5 +1,6 @@
 <script>
 const API_BASE_URL = '192.168.0.195'
+//const API_BASE_URL = 'localhost'
 import BotResult from '@/components/botResult.vue'
 import axios from 'axios'
 const getDefaultConfig = () => ({
@@ -176,7 +177,7 @@ export default {
 <template>
   <div class="flex flex-col md:flex-row gap-4 p-4 min-h-screen mx-auto">
     <!-- Left Column: Configuration -->
-    <div class="md:w-1/3 flex flex-col gap-4">
+    <div class="md:w-1/4 flex flex-col gap-4">
       <!-- Preset Selector Box -->
       <div class="bg-gray-800 p-4 rounded-lg">
         <h2 class="text-xl font-bold mb-4 text-white">
@@ -440,7 +441,7 @@ export default {
     </div>
 
     <!-- Right Column: Results -->
-    <div class="md:w-2/3 bg-gray-800 p-4 rounded-lg">
+    <div class="md:w-3/4 bg-gray-800 p-4 rounded-lg">
       <div class="flex justify-between items-center mb-4">
         <h2 class="text-xl font-bold text-white">Results</h2>
         <button
