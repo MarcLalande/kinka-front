@@ -20,6 +20,7 @@ const getDefaultConfig = () => ({
   multStep: null,
   multAmount: null,
   margeSupp: 0.0,
+  stopLoss: 0.0,
 })
 export default {
   components: {
@@ -66,6 +67,9 @@ export default {
         })
     },
 
+    convertToCSV(
+
+    ) {},
     loadPreset() {
       console.log(this.selectedPreset)
 
@@ -87,6 +91,7 @@ export default {
         multStep: selectedConfig.MultStep,
         multAmount: selectedConfig.MultAmount,
         margeSupp: selectedConfig.margeSupp,
+        stopLoss: selectedConfig.stopLoss,
       }
     },
     launchDetails() {
@@ -424,6 +429,16 @@ export default {
               type="number"
               step="1"
               v-model.number="config.margeSupp"
+              class="mt-1 block w-full py-2 px-3 border border-gray-700 bg-gray-900 text-white rounded-md focus:outline-none focus:ring-indigo-500"
+              placeholder="e.g., 50"
+            />
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-300">stop loss</label>
+            <input
+              type="number"
+              step="1"
+              v-model.number="config.stopLoss"
               class="mt-1 block w-full py-2 px-3 border border-gray-700 bg-gray-900 text-white rounded-md focus:outline-none focus:ring-indigo-500"
               placeholder="e.g., 50"
             />
