@@ -174,6 +174,21 @@
               <span class="param-value danger">{{ botData.dateLiquidation || 'N/A' }}</span>
             </div>
           </div>
+          <div class="subsection">
+            <div class="subsection-title">SL STATUS:</div>
+
+            <div class="parameter">
+              <span class="param-label">Has SL:</span>
+              <span class="param-value" :class="botData.HasSL ? 'danger' : 'success'">
+                {{ botData.HasSL ? 'YES' : 'NO' }}
+              </span>
+            </div>
+
+            <div class="parameter" v-if="botData.HasSL">
+              <span class="param-label">Liquidation Date:</span>
+              <span class="param-value danger">{{ botData.DateSL || 'N/A' }}</span>
+            </div>
+          </div>
 
           <div class="subsection">
             <div class="subsection-title">LIQUIDATION PROXIMITY:</div>
