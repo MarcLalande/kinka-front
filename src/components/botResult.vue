@@ -150,6 +150,18 @@
               <span class="param-label">Total Profit:</span>
               <span class="param-value">{{ botData.botProfit || 'N/A' }}</span>
             </div>
+            <div class="parameter">
+              <span class="param-label">Marge premier cycle :</span>
+              <span class="param-value">{{ botData.MarginFirstCycle || 'N/A' }}</span>
+            </div>
+            <div class="parameter">
+              <span class="param-label">Pourcentage Profit:</span>
+              <span class="param-value important-data"
+                >{{
+                  ((botData.botProfit / botData.MarginFirstCycle) * 100).toFixed(1) || 'N/A'
+                }}%</span
+              >
+            </div>
           </div>
         </div>
 
@@ -888,5 +900,11 @@ export default {
 /* First column (Order #) centered */
 .data-table td:first-child {
   text-align: center;
+}
+.important-data {
+  background-color: #4ade80;
+  color: #252525;
+  padding: 4px;
+  border-radius: 4px;
 }
 </style>

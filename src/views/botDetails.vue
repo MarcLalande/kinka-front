@@ -9,7 +9,7 @@ const getDefaultConfig = () => ({
   interval: '',
   startDate: '',
   endDate: '',
-  symbol: '',
+  symbol: 'BTC',
   pos: 'LONG',
   lever: null,
   priceStep: null,
@@ -290,12 +290,14 @@ export default {
           <!-- Symbol -->
           <div>
             <label class="block text-sm font-medium text-gray-300">Symbol</label>
-            <input
-              type="text"
+
+            <select
               v-model="config.symbol"
               class="mt-1 block w-full py-2 px-3 border border-gray-700 bg-gray-900 text-white rounded-md focus:outline-none focus:ring-indigo-500"
-              placeholder="e.g., BTC, ETH"
-            />
+            >
+              <option value="BTC">BTC</option>
+              <option value="ETH">ETH</option>
+            </select>
           </div>
 
           <!-- Start Date -->
