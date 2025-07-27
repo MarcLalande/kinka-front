@@ -1,10 +1,10 @@
 <script>
-const API_BASE_URL = '192.168.0.195'
+const API_BASE_URL = '192.168.63.1'
 //const API_BASE_URL = 'localhost'
 import BotResult from '@/components/botResult.vue'
 import axios from 'axios'
 const getDefaultConfig = () => ({
-  API_BASE_URL: '192.168.0.195',
+  API_BASE_URL: '192.168.63.1',
   name: '',
   interval: '',
   startDate: '',
